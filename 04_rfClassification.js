@@ -16,8 +16,8 @@ var output_version =  1;  // output classification version
 var AUI_nSamples = 250;
 
 // set years to be processed
-//var years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
-var years = [2017, 2024];
+var years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+//var years = [2017, 2024];
 
 // read study area
 var bacia = ee.FeatureCollection('projects/ee-deisejunqueira/assets/DepressaoPeriferica');
