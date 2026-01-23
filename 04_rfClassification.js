@@ -115,7 +115,7 @@ years.forEach(function(year_i) {
   // perform classification
   var predicted = emb_i
     .classify(classifier)
-    .mask(emb_i.select(0))
+    //.mask(emb_i.select(0))
     .rename('classification_' + year_i)
     .toInt8();
 
