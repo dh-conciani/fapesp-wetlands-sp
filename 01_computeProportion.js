@@ -1,9 +1,9 @@
 // compute areas to be used as reference to sort the number of per class samples
 
-var file_name = 'baciaCorumbatai'
+var file_name = 'depressaoPeriferica'
 
 // input metadata
-var version_output = 1;
+var version_output = 2;
 
 // define classes to be assessed
 var classes = [3, 4, 11, 12, 15, 18, 25, 33];
@@ -12,10 +12,11 @@ var classes = [3, 4, 11, 12, 15, 18, 25, 33];
 var output_dir = 'users/dh-conciani/wetlands-fapesp-sp';
 
 // read study area
-var carta = ee.FeatureCollection("projects/ee-deisejunqueira/assets/BaciaCorumbatai")
+var carta = ee.FeatureCollection('projects/ee-deisejunqueira/assets/DepressaoPeriferica');
 
 // read reference data in which areas will be computed
-var mapbiomas = ee.Image('projects/ee-ipam-cerrado/assets/Collection_11/masks/cerrado_trainingMask_1985_2024_v4');
+var mapbiomas = ee.Image('projects/ee-ipam-cerrado/assets/Collection_11/masks/cerrado_trainingMask_1985_2024_v4')
+  .clip(carta);
 
 // define function to compute area (skm)
 var pixelArea = ee.Image.pixelArea().divide(10000);
