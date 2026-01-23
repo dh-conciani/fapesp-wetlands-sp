@@ -2,13 +2,13 @@
 // dhemerson.costa@ipam.org.br
 
 // define string to use as metadata
-var version = 1;
+var version = 2;
 
 // define ibges' carta id
-var file_name = 'baciaCorumbatai';
+var file_name = 'depressaoPeriferica';
 
 // input metadata
-var version_output = 1;
+var version_output = 2;
 
 // output directory
 var output_dir = 'users/dh-conciani/wetlands-fapesp-sp';
@@ -33,10 +33,10 @@ var trainingMask = ee.Image('projects/ee-ipam-cerrado/assets/Collection_11/masks
   .blend(AUI);  // colocar AUI em cima das amostras estáveis
 
 // read areas reference 
-var referenceAreas = ee.FeatureCollection('users/dh-conciani/wetlands-fapesp-sp/baciaCorumbatai_area_v1');
+var referenceAreas = ee.FeatureCollection('users/dh-conciani/wetlands-fapesp-sp/depressaoPeriferica_area_v2');
 
 // read study area
-var carta = ee.FeatureCollection("projects/ee-deisejunqueira/assets/BaciaCorumbatai")
+var carta = ee.FeatureCollection('projects/ee-deisejunqueira/assets/DepressaoPeriferica');
 
 // import mapbiomas module
 var vis = {
