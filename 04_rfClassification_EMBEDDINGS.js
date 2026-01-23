@@ -2,15 +2,18 @@
 // For clarification, write to <dhemerson.costa@ipam.org.br>
 
 // define ibges' carta id
-var file_name = 'baciaCorumbatai';
+var file_name = 'depressaoPeriferica';
 var file_name_out = 'depressaoPeriferica';
+
+// mosaic name
+var mosaic_name = 'EMBEDDINGS';
 
 // output directory
 var output_dir = 'users/dh-conciani/wetlands-fapesp-sp/classification';
 
 // define strings to be used as metadata
-var samples_version = 1;   // input training samples version
-var output_version =  1;  // output classification version
+var samples_version = 2;   // input training samples version
+var output_version =  2;  // output classification version
 
 // number of AUI samples
 var AUI_nSamples = 250;
@@ -75,7 +78,7 @@ years.forEach(function(year_i) {
   // read training samples
   var samples_i = ee.FeatureCollection(
     'users/dh-conciani/wetlands-fapesp-sp/training/v' + samples_version + '/' +
-    file_name + '_' + year_i + '_training_v' + samples_version
+    file_name + '_' + year_i + '_training_' + mosaic_name + '_v' + samples_version
   );
   
   // get only AUI
@@ -147,8 +150,8 @@ print('RF variable importance (all years)', importanceAll.limit(200));
 // export classification
 Export.image.toAsset({
   image: img,
-  description: file_name_out + '_classification_v' + output_version,
-  assetId: output_dir + '/' + file_name_out + '_classification_v' + output_version,
+  description: file_name_out + '_classification_' + mosaic_name + '_v' + output_version,
+  assetId: output_dir + '/' + file_name_out + '_classification_' + mosaic_name + '_v' + output_version,
   pyramidingPolicy: 'mode',
   region: bacia.geometry(),
   scale: 10,
@@ -158,8 +161,8 @@ Export.image.toAsset({
 // export variable importance table (CSV to Google Drive)
 Export.table.toDrive({
   collection: importanceAll,
-  description: 'rf_importance_' + file_name_out + '_v' + output_version,
-  fileNamePrefix: 'rf_importance_' + file_name_out + '_v' + output_version,
+  description: 'rf_importance_' + file_name_out + '_' + mosaic_name + '_v' + output_version,
+  fileNamePrefix: 'rf_importance_' + file_name_out + '_' + mosaic_name + '_v' + output_version,
   fileFormat: 'CSV'
 });
 
