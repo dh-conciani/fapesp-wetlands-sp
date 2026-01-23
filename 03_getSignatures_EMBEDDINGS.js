@@ -1,22 +1,25 @@
 // training samples
 
 // define string to use as metadata
-var version = 1;
+var version = 2;
 
 // define ibges' carta id
-var file_name = 'baciaCorumbatai';
+var file_name = 'depressaoPeriferica';
+
+// set mosaic
+var mosaic_name = 'EMBEDDINGS';
 
 // define output dir
-var output_dir = 'users/dh-conciani/wetlands-fapesp-sp/training/v1'
+var output_dir = 'users/dh-conciani/wetlands-fapesp-sp/training/v2';
 
 
 var years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
 
 // carregar pontos
-var samples = ee.FeatureCollection('users/dh-conciani/wetlands-fapesp-sp/baciaCorumbatai_samplePoints_v1');
+var samples = ee.FeatureCollection('users/dh-conciani/wetlands-fapesp-sp/depressaoPeriferica_samplePoints_v2');
 
-// Bacia / AOI
-var bacia = ee.FeatureCollection("projects/ee-deisejunqueira/assets/BaciaCorumbatai");
+// read study area
+var bacia = ee.FeatureCollection('projects/ee-deisejunqueira/assets/DepressaoPeriferica');
 
 // Embeddings
 var embeddingsIC = ee.ImageCollection('GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL');
@@ -70,7 +73,8 @@ years.forEach(function(year_i) {
   
   // export as GEE asset
   Export.table.toAsset({'collection': training_i,
-                      'description': file_name  + '_' + year_i + '_training_v' + version,
-                      'assetId':  output_dir + '/' + file_name  + '_' + year_i + '_training_v' + version});
+                      'description': file_name  + '_' + year_i + '_training_' + mosaic_name + '_v' + version,
+                      'assetId':  output_dir + '/' + file_name  + '_' + year_i + '_training_' + mosaic_name + '_v' + version});
+  
   
 })
