@@ -1,40 +1,31 @@
 // training samples
 
+// define string to use as metadata
+var version = 1;
+
+// define ibges' carta id
+var file_name = 'baciaCorumbatai';
+
+// define output dir
+var output_dir = 'users/dh-conciani/wetlands-fapesp-sp/training/v1'
+
+
 var years = [2024];
 
-// GT com métricas já calculadas (export calculos morfométricos)
-var gtPolys = ee.FeatureCollection("projects/ee-deisejunqueira/assets/ManuscriptPolygons_metrics");
+// carregar pontos
+var samples = ee.FeatureCollection('users/dh-conciani/wetlands-fapesp-sp/baciaCorumbatai_samplePoints_v1');
 
 // Bacia / AOI
 var bacia = ee.FeatureCollection("projects/ee-deisejunqueira/assets/BaciaCorumbatai");
-var aoi = bacia.geometry();
-
-// Hidrografia (seu asset)
-var riversFC = ee.FeatureCollection("projects/ee-deisejunqueira/assets/Ughri05_hidrografia")
-  .filterBounds(aoi);
 
 // Embeddings
 var embeddingsIC = ee.ImageCollection('GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL');
-
-// MapBiomas (Coleção 10)
-//var mb = ee.Image('projects/mapbiomas-public/assets/brazil/lulc/collection10/mapbiomas_brazil_collection10_coverage_v2');
-
-var stable = ee.Image('projects/ee-ipam-cerrado/assets/Collection_11/masks/cerrado_trainingMask_1985_2024_v4')
-
-// read palette
-var vis = {
-    'min': 0,
-    'max': 62,
-    'palette': require('users/mapbiomas/modules:Palettes.js').get('classification8')
-};
-
-Map.addLayer(stable, vis, 'stable pixels mapbiomas');
 
 
 // ======================================================================
 // 2) VARIÁVEIS TOPO (RASTER): SRTM + HAND MERIT
 // ======================================================================
-var srtm = ee.Image('USGS/SRTMGL1_003').clip(aoi);
+var srtm = ee.Image('USGS/SRTMGL1_003').clip(bacia);
 var elevation = srtm.rename('elevation');
 var slope = ee.Terrain.slope(srtm).rename('slope');
 
@@ -42,17 +33,45 @@ var meanElev = srtm.focal_mean({radius: 250, units: 'meters'});
 var tpi = srtm.subtract(meanElev).rename('tpi');
 
 // HAND REAL (MERIT Hydro) — usado no RF pixel e nas métricas por polígono
-var handImg = ee.Image("MERIT/Hydro/v1_0_1").select("hnd").rename("hand").clip(aoi);
+var handImg = ee.Image("MERIT/Hydro/v1_0_1").select("hnd").rename("hand").clip(bacia);
 
 // ======================================================================
 // 3) DISTÂNCIA A RIOS (RASTER) — usado no RF pixel e nas métricas por polígono
 // ======================================================================
-var riversRaster = ee.Image(0).byte().paint(riversFC, 1).rename("rivers").clip(aoi);
+// Hidrografia (seu asset)
+var riversFC = ee.FeatureCollection("projects/ee-deisejunqueira/assets/Ughri05_hidrografia")
+  .filterBounds(bacia);
+
+var riversRaster = ee.Image(0).byte().paint(riversFC, 1).rename("rivers").clip(bacia);
 var distRiversImgBase = riversRaster
   .fastDistanceTransform(1000).sqrt()
   .multiply(30)
   .rename('dist_river')
-  .clip(aoi);
+  .clip(bacia);
 
 //Map.addLayer(distRiversImgBase, {palette: ['green', 'yellow', 'red'], min:1, max:500}, 'distRivers')
+
+////////////////////////////
+years.forEach(function(year_i) {
+
+  // read mosaic for year i
+  var emb_i = embeddingsIC.filterDate(year_i + '-01-01', year_i + '-12-30')
+    .mosaic()
+    .clip(bacia);
+
+  // add terrain bands
+  emb_i = emb_i.addBands([elevation, slope, tpi, handImg, distRiversImgBase]);
+  
+  // get training samples
+  var training_i = emb_i.sampleRegions({'collection': samples,
+                                         'scale': 10,
+                                         'geometries': true,
+                                         'tileScale': 2});
+  
+  // export as GEE asset
+  Export.table.toAsset({'collection': training_i,
+                      'description': file_name  + '_' + year_i + '_training_v' + version,
+                      'assetId':  output_dir + '/' + file_name  + '_' + year_i + '_training_v' + version});
+  
+})
 
