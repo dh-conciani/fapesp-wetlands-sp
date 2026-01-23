@@ -11,11 +11,16 @@ var output_dir = 'users/dh-conciani/wetlands-fapesp-sp/classification';
 var samples_version = 1;   // input training samples version
 var output_version =  1;  // output classification version
 
+// number of AUI samples
+var AUI_nSamples = 250;
+
 // set years to be processed
-var years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+//var years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+var years = [2017, 2024];
 
 // read study area
-var bacia = ee.FeatureCollection("projects/ee-deisejunqueira/assets/BaciaCorumbatai");
+var bacia = ee.FeatureCollection('projects/ee-deisejunqueira/assets/DepressaoPeriferica');
+var corumbatai = ee.FeatureCollection("projects/ee-deisejunqueira/assets/BaciaCorumbatai")
 
 // Embeddings
 var embeddingsIC = ee.ImageCollection('GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL');
@@ -71,6 +76,15 @@ years.forEach(function(year_i) {
     'users/dh-conciani/wetlands-fapesp-sp/training/v' + samples_version + '/' +
     file_name + '_' + year_i + '_training_v' + samples_version
   );
+  
+  // get only AUI
+  var aui_i = samples_i.filterMetadata('reference', 'equals', 9)
+    .randomColumn('rand')
+    .sort('rand')
+    .limit(AUI_nSamples);
+    
+  // merge with total samples
+  samples_i = samples_i.filterMetadata('reference', 'not_equals', 9).merge(aui_i)
 
   // read mosaic for year i
   var emb_i = embeddingsIC
@@ -115,7 +129,6 @@ years.forEach(function(year_i) {
   // perform classification
   var predicted = emb_i
     .classify(classifier)
-    //.mask(emb_i.select(0))
     .rename('classification_' + year_i)
     .toInt8();
 
@@ -148,3 +161,7 @@ Export.table.toDrive({
   fileNamePrefix: 'rf_importance_' + file_name + '_v' + output_version,
   fileFormat: 'CSV'
 });
+
+// 
+Map.addLayer(ee.FeatureCollection("projects/ee-deisejunqueira/assets/ManuscriptPolygons_metrics"), {}, 'trainingPolys')
+Map.addLayer(corumbatai, {}, 'corumbatai')
