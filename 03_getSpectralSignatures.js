@@ -10,7 +10,7 @@ var file_name = 'baciaCorumbatai';
 var output_dir = 'users/dh-conciani/wetlands-fapesp-sp/training/v1'
 
 
-var years = [2024];
+var years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
 
 // carregar pontos
 var samples = ee.FeatureCollection('users/dh-conciani/wetlands-fapesp-sp/baciaCorumbatai_samplePoints_v1');
@@ -74,4 +74,3 @@ years.forEach(function(year_i) {
                       'assetId':  output_dir + '/' + file_name  + '_' + year_i + '_training_v' + version});
   
 })
-
