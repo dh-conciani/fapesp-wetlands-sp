@@ -22,7 +22,6 @@ var samples = ee.FeatureCollection('users/dh-conciani/wetlands-fapesp-sp/depress
 var bacia = ee.FeatureCollection('projects/ee-deisejunqueira/assets/DepressaoPeriferica');
 
 // Embeddings
-var sentinelIC = ee.ImageCollection("projects/nexgenmap/MapBiomas2/SENTINEL/mosaics-3");
 
 
 // ======================================================================
@@ -56,6 +55,12 @@ var distRiversImgBase = riversRaster
 
 ////////////////////////////
 years.forEach(function(year_i) {
+  
+  if (year_i <= 2023) {
+  var sentinelIC = ee.ImageCollection("projects/mapbiomas-mosaics/assets/SENTINEL/BRAZIL/mosaics-3");
+  } else {
+    var sentinelIC = ee.ImageCollection("projects/nexgenmap/MapBiomas2/SENTINEL/mosaics-3");
+    }
 
   // read mosaic for year i
   var emb_i = sentinelIC.filter(ee.Filter.eq('year', year_i))
