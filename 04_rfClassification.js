@@ -3,6 +3,7 @@
 
 // define ibges' carta id
 var file_name = 'baciaCorumbatai';
+var file_name_out = 'depressaoPeriferica';
 
 // output directory
 var output_dir = 'users/dh-conciani/wetlands-fapesp-sp/classification';
@@ -146,8 +147,8 @@ print('RF variable importance (all years)', importanceAll.limit(200));
 // export classification
 Export.image.toAsset({
   image: img,
-  description: file_name + '_classification_v' + output_version,
-  assetId: output_dir + '/' + file_name + '_classification_v' + output_version,
+  description: file_name_out + '_classification_v' + output_version,
+  assetId: output_dir + '/' + file_name_out + '_classification_v' + output_version,
   pyramidingPolicy: 'mode',
   region: bacia.geometry(),
   scale: 10,
@@ -157,8 +158,8 @@ Export.image.toAsset({
 // export variable importance table (CSV to Google Drive)
 Export.table.toDrive({
   collection: importanceAll,
-  description: 'rf_importance_' + file_name + '_v' + output_version,
-  fileNamePrefix: 'rf_importance_' + file_name + '_v' + output_version,
+  description: 'rf_importance_' + file_name_out + '_v' + output_version,
+  fileNamePrefix: 'rf_importance_' + file_name_out + '_v' + output_version,
   fileFormat: 'CSV'
 });
 
