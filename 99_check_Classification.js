@@ -1,6 +1,7 @@
 // load collection
 var embeddings = ee.Image('users/dh-conciani/wetlands-fapesp-sp/classification/depressaoPeriferica_classification_EMBEDDINGS_v2')
-var sentinel = ee.Image('users/dh-conciani/wetlands-fapesp-sp/classification/depressaoPeriferica_classification_SENTINEL_v2')
+var temporal = ee.Image('users/dh-conciani/wetlands-fapesp-sp/classification/depressaoPeriferica_classification_EMBEDDINGS_v2_temporal_v2')
+//var spatial = ee.Image('users/dh-conciani/wetlands-fapesp-sp/classification/depressaoPeriferica_classification_EMBEDDINGS_v2_temporal_v2_spatial_v2')
 
 // set years
 var years = [2024];
@@ -14,6 +15,7 @@ var vis = {
 
 years.forEach(function(year_i) {
   Map.addLayer(embeddings.select('classification_' + year_i), vis, 'embeddings ' + year_i)
-  Map.addLayer(sentinel.select('classification_' + year_i), vis, 'sentinel ' + year_i);
+  Map.addLayer(temporal.select('classification_' + year_i), vis, 'embeddings+temporal ' + year_i);
+  //Map.addLayer(spatial.select('classification_' + year_i), vis, 'embeddings+temporal+spatial ' + year_i);
 
 });
