@@ -31,7 +31,7 @@ var collection = ee.Image('projects/mapbiomas-public/assets/brazil/lulc/collecti
 var scale = 10;
 
 // define the years to bem computed 
-var years = ee.List.sequence({'start': 2017, 'end': 2024, 'step': 1}).getInfo();
+var years = ee.List.sequence({'start': 1985, 'end': 2024, 'step': 1}).getInfo();
 
 // define a Google Drive output folder 
 var driverFolder = 'AREA-EXPORT-WETLANDS-SP';
@@ -94,7 +94,7 @@ asset.map(function(file) {
   // perform per year 
   var areas = years.map(
       function (year) {
-          var image_i = asset_i.select('classification_' + year);
+          var image_i = asset_i.select('classification_2024');
           
            var buffer = toBuff.select('classification_' + year).eq(9)
             .distance(ee.Kernel.euclidean(500, 'meters'), false);
